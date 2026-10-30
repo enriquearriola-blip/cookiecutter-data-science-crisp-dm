@@ -9,7 +9,7 @@ _Una estructura de proyecto lógica, razonablemente estandarizada y flexible par
 </a>
 [![tests](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml/badge.svg)](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml)
 
-> **Este repositorio es un fork de [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), creado y mantenido por [DrivenData](https://www.drivendata.org/).** Todo el crédito de la plantilla es de DrivenData y sus colaboradores. Este fork traduce la plantilla al español y agrega una carpeta con la metodología CRISP-DM a cada proyecto generado (consulta [Este fork](#este-fork) y [Créditos y licencia](#créditos-y-licencia)).
+> **Este repositorio es un fork de [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), creado y mantenido por [DrivenData](https://www.drivendata.org/).** Todo el crédito de la plantilla es de DrivenData y sus colaboradores. Este fork traduce la plantilla al español y agrega a cada proyecto generado una carpeta con la metodología CRISP-DM y otra para las consultas SQL de extracción (consulta [Este fork](#este-fork) y [Créditos y licencia](#créditos-y-licencia)).
 
 **Cookiecutter Data Science (CCDS)** es una herramienta para crear una plantilla de proyecto de ciencia de datos que incorpora buenas prácticas. Para conocer la filosofía de CCDS, visita la [página del proyecto](https://cookiecutter-data-science.drivendata.org/) (en inglés).
 
@@ -17,10 +17,11 @@ _Una estructura de proyecto lógica, razonablemente estandarizada y flexible par
 
 ## Este fork
 
-Este repositorio es CCDS v2.3.0 con dos cambios:
+Este repositorio es CCDS v2.3.0 con tres cambios:
 
 - **Español.** Está en español todo lo que lee quien usa la plantilla: este README, y en cada proyecto generado el README, la ayuda y los mensajes del Makefile, los comentarios y mensajes del código base y la documentación de mkdocs. Los nombres de carpetas, archivos, variables y opciones se quedan en inglés, porque son el estándar de CCDS y el paquete `ccds` depende de ellos. Las preguntas que hace `ccds` al generar un proyecto (por ejemplo, `project_name` o `Select docs`) también salen en inglés, porque vienen del paquete instalado.
 - **CRISP-DM.** Cada proyecto generado incluye la carpeta `crisp_dm/` con un documento por fase de CRISP-DM (comprensión del negocio, comprensión de los datos, preparación de los datos, modelado, evaluación y despliegue). Cada documento enumera las tareas CRISP-DM de la fase, el resultado de cada tarea y una lista de verificación de cierre. `crisp_dm/README.md` lleva el estado de cada fase, relaciona las fases con las carpetas de CCDS y registra cada regreso a una fase anterior.
+- **Consultas SQL.** El código base incluye la carpeta `sql/` para las consultas de extracción, una por archivo, y la función `extraer()` en `dataset.py`, que ejecuta una consulta con sus parámetros y regresa un DataFrame. La conexión se define en `.env` como `DATABASE_URL`; por defecto se instalan `sqlalchemy`, el driver de PostgreSQL (`psycopg2-binary`), `pandas` y `pyarrow`. Para otra base de datos, cambia el driver en las dependencias del proyecto y la URL.
 
 **Definir tu metodología.** Haz un fork o clona este repositorio y edita los archivos de `{{ cookiecutter.repo_name }}/crisp_dm/`. Cada proyecto que generes después tendrá tu versión; los proyectos ya generados no cambian. Los archivos son plantillas Jinja, así que pueden usar las variables de CCDS, como `{{ cookiecutter.project_name }}` o `{{ cookiecutter.author_name }}`, y las llaves dobles literales del texto se deben escapar. Para generar un proyecto desde una copia local, pasa su ruta; se usan los archivos tal como están en disco:
 
@@ -111,7 +112,9 @@ La estructura de carpetas de tu proyecto nuevo se verá más o menos así (segú
     │   ├── predict.py          <- Código para hacer inferencia con los modelos entrenados
     │   └── train.py            <- Código para entrenar modelos
     │
-    └── plots.py                <- Código para crear visualizaciones
+    ├── plots.py                <- Código para crear visualizaciones
+    │
+    └── sql                     <- Consultas SQL de extracción, una por archivo; las ejecuta dataset.py
 ```
 
 ## Usar otras versiones de la plantilla
@@ -150,6 +153,6 @@ pytest tests
 
 ## Créditos y licencia
 
-Cookiecutter Data Science es creado y mantenido por [DrivenData](https://www.drivendata.org/) y sus [colaboradores](https://github.com/drivendataorg/cookiecutter-data-science/graphs/contributors). El repositorio original es [drivendataorg/cookiecutter-data-science](https://github.com/drivendataorg/cookiecutter-data-science) y su documentación está en [cookiecutter-data-science.drivendata.org](https://cookiecutter-data-science.drivendata.org/). Todo lo que contiene este repositorio, salvo la traducción y la parte de CRISP-DM, es obra suya y se usa bajo la licencia MIT. El aviso de copyright original se conserva sin cambios en [LICENSE](LICENSE), y la traducción y la parte de CRISP-DM se distribuyen bajo la misma licencia.
+Cookiecutter Data Science es creado y mantenido por [DrivenData](https://www.drivendata.org/) y sus [colaboradores](https://github.com/drivendataorg/cookiecutter-data-science/graphs/contributors). El repositorio original es [drivendataorg/cookiecutter-data-science](https://github.com/drivendataorg/cookiecutter-data-science) y su documentación está en [cookiecutter-data-science.drivendata.org](https://cookiecutter-data-science.drivendata.org/). Todo lo que contiene este repositorio, salvo los cambios de este fork (la traducción, CRISP-DM y las consultas SQL), es obra suya y se usa bajo la licencia MIT. El aviso de copyright original se conserva sin cambios en [LICENSE](LICENSE), y los cambios de este fork se distribuyen bajo la misma licencia.
 
 Los documentos de CRISP-DM siguen las fases, tareas y salidas de la _CRISP-DM 1.0 Step-by-step data mining guide_ (Chapman et al., 2000), escrita por el consorcio CRISP-DM.

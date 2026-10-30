@@ -44,7 +44,7 @@ Valores de estado: Sin iniciar, En curso, Terminada, Revisitada.
 | Fase | Notebooks (`notebooks/`) | Código (`{{ cookiecutter.module_name }}/`) | Datos y salidas |
 |---|---|---|---|
 | 1. Comprensión del negocio | | | `references/`: requerimientos, glosario, material de los interesados |
-| 2. Comprensión de los datos | `0.xx-*`: exploración de datos | `dataset.py` | `data/raw/`, `data/external/`, `references/`: diccionarios de datos |
+| 2. Comprensión de los datos | `0.xx-*`: exploración de datos | `dataset.py`, `sql/` | `data/raw/`, `data/external/`, `references/`: diccionarios de datos |
 | 3. Preparación de los datos | `1.xx-*`: limpieza y creación de variables | `dataset.py`, `features.py` | `data/interim/`, `data/processed/` |
 | 4. Modelado | `3.xx-*`: modelado | `modeling/train.py` | `models/` |
 | 5. Evaluación | `2.xx-*`: visualizaciones | `modeling/predict.py`, `plots.py` | `reports/`, `reports/figures/` |

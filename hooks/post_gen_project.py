@@ -45,6 +45,16 @@ pip_only_packages = [
     "python-dotenv",
 ]
 
+# {% if cookiecutter.include_code_scaffold == "Yes" %}
+# dataset.extraer() runs the queries in sql/ against PostgreSQL and saves parquet files;
+# skip packages already added (pandas comes with "basic") so TOML files get no duplicate keys
+packages_to_install += [
+    p for p in ["pandas", "pyarrow", "sqlalchemy"] if p not in packages_to_install
+]
+packages_to_install += ["psycopg2-binary"]
+pip_only_packages += ["psycopg2-binary"]
+# {% endif %}
+
 # Select testing framework
 tests_path = Path("tests")
 

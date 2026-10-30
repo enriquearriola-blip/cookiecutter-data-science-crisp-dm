@@ -14,8 +14,9 @@ primeros hallazgos.
 |---|---|---|---|---|---|---|---|
 | | | | | | | | |
 
-_Problemas encontrados al recolectar los datos y cómo se resolvieron. Guarda las consultas y scripts de extracción en el
-repositorio y las extracciones crudas, sin modificar, en `data/raw/`._
+_Problemas encontrados al recolectar los datos y cómo se resolvieron. Guarda las consultas de extracción en
+`{{ cookiecutter.module_name }}/sql/` (en la columna "Ubicación o consulta", enlaza el archivo) y las extracciones
+crudas, sin modificar, en `data/raw/`._
 
 ## 2.2 Describir los datos
 

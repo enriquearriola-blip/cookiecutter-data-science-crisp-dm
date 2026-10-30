@@ -76,6 +76,7 @@ def verify_folders(root, config):
     if config["include_code_scaffold"] == "Yes":
         expected_dirs += [
             f"{config['module_name']}/modeling",
+            f"{config['module_name']}/sql",
         ]
 
     if config["docs"] == "mkdocs":
@@ -138,6 +139,7 @@ def verify_files(root, config):
             f"{config['module_name']}/modeling/train.py",
             f"{config['module_name']}/modeling/predict.py",
             f"{config['module_name']}/plots.py",
+            f"{config['module_name']}/sql/01_clientes.sql",
         ]
 
     if config["docs"] == "mkdocs":

@@ -56,7 +56,9 @@
     │   ├── predict.py          <- Código para hacer inferencia con los modelos entrenados
     │   └── train.py            <- Código para entrenar modelos
     │
-    └── plots.py                <- Código para crear visualizaciones
+    ├── plots.py                <- Código para crear visualizaciones
+    │
+    └── sql                     <- Consultas SQL de extracción, una por archivo; las ejecuta dataset.py
 ```
 
 --------
