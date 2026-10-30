@@ -9,7 +9,7 @@ _Una estructura de proyecto lógica, razonablemente estandarizada y flexible par
 </a>
 [![tests](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml/badge.svg)](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml)
 
-> **Este repositorio es un fork de [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), creado y mantenido por [DrivenData](https://www.drivendata.org/).** Todo el crédito de la plantilla es de DrivenData y sus colaboradores. Este fork traduce la plantilla al español y agrega a cada proyecto generado una carpeta con la metodología CRISP-DM y otra para las consultas SQL de extracción (consulta [Este fork](#este-fork) y [Créditos y licencia](#créditos-y-licencia)).
+> **Este repositorio es un fork de [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), creado y mantenido por [DrivenData](https://www.drivendata.org/).** Todo el crédito de la plantilla es de DrivenData y sus colaboradores. Este fork traduce la plantilla al español y agrega a cada proyecto generado una carpeta con la metodología CRISP-DM y otra para las consultas SQL de extracción (consulta [Este fork](#este-fork) y [Créditos y licencia](#créditos-y-licencia)). Para empezar, sigue la [Guía rápida](#guía-rápida).
 
 **Cookiecutter Data Science (CCDS)** es una herramienta para crear una plantilla de proyecto de ciencia de datos que incorpora buenas prácticas. Para conocer la filosofía de CCDS, visita la [página del proyecto](https://cookiecutter-data-science.drivendata.org/) (en inglés).
 
@@ -38,29 +38,121 @@ git merge v2.4.0                                       # la versión nueva
 pipx install --force cookiecutter-data-science==2.4.0  # mantén el paquete al día con la plantilla
 ```
 
-## Instalación
+## Guía rápida
 
-Cookiecutter Data Science v2 requiere Python 3.9 o superior. Como es una aplicación que se usa en muchos proyectos, se recomienda instalarla con [pipx](https://pypa.github.io/pipx/). Los hooks de la plantilla importan funciones del paquete `ccds` instalado, así que instala la versión que corresponde a esta plantilla:
+Pasos para crear un proyecto desde cero en cualquier computadora. El repositorio es público, así que no necesitas iniciar sesión en GitHub.
+
+### 1. Instala los requisitos
+
+Necesitas Python 3.9 o superior, `git`, `make` y el paquete `ccds` en la versión 2.3.0, instalado con [pipx](https://pipx.pypa.io/). La versión tiene que ser exactamente esa, porque los hooks de la plantilla importan funciones del paquete `ccds` instalado.
+
+**Ubuntu/Debian**
 
 ```bash
-# Con pipx desde PyPI (recomendado)
+sudo apt install python3 python3-venv git make pipx
+pipx ensurepath          # después cierra y vuelve a abrir la terminal
 pipx install cookiecutter-data-science==2.3.0
-
-# Con pip desde PyPI
-pip install cookiecutter-data-science==2.3.0
 ```
 
-## Iniciar un proyecto nuevo
-
-Para iniciar un proyecto nuevo, ejecuta:
+**macOS** (`make` viene con las herramientas de línea de comandos de Xcode)
 
 ```bash
+brew install python git pipx
+pipx ensurepath          # después cierra y vuelve a abrir la terminal
+pipx install cookiecutter-data-science==2.3.0
+```
+
+**Windows** (PowerShell)
+
+```powershell
+py -m pip install --user pipx
+py -m pipx ensurepath             # después vuelve a abrir PowerShell
+pipx install cookiecutter-data-science==2.3.0
+```
+
+Anota la versión de Python de la computadora (`python3 --version`, o `py --version` en Windows); la necesitas en el paso 2.
+
+### 2. Genera el proyecto
+
+```bash
+cd ~/Documentos            # la carpeta donde guardas tus proyectos
 ccds https://github.com/enriquearriola-blip/cookiecutter-data-science-crisp-dm -c crisp-dm
 ```
 
-La opción `-c crisp-dm` es necesaria: sin ella, `ccds` usa la etiqueta de la versión instalada (`v2.3.0`), que es la plantilla original, en inglés y sin CRISP-DM.
+La opción `-c crisp-dm` es necesaria: sin ella, `ccds` usa la etiqueta de la versión instalada (`v2.3.0`), que es la plantilla original, en inglés y sin CRISP-DM ni `sql/`. Si `ccds` pregunta si puede borrar y volver a descargar la plantilla, responde que sí (`yes`) para usar la versión más reciente.
 
-### La estructura de carpetas resultante
+Las preguntas salen en inglés; las de opciones son menús numerados:
+
+| Pregunta | Respuesta sugerida |
+|---|---|
+| `project_name` | Por ejemplo, `Proyecto Prueba` (la carpeta se llamará `proyecto_prueba`) |
+| `repo_name`, `module_name` | Enter, para aceptar el valor propuesto |
+| `author_name`, `description` | Tu nombre y una frase sobre el proyecto |
+| `python_version_number` | **La versión de Python de la computadora** (por ejemplo, `3.12`); si no coincide, la instalación falla con "requires a different Python" |
+| `dataset_storage` | `none` |
+| `environment_manager` | `none` si creas el ambiente tú (paso 3); `virtualenv` necesita virtualenvwrapper instalado |
+| `dependency_file` | `requirements.txt` |
+| `pydata_packages` | `basic` (agrega numpy, scikit-learn, matplotlib y Jupyter) |
+| `testing_framework` | `pytest` |
+| `linting_and_formatting` | `ruff` |
+| `open_source_license` | `No license file`, para trabajo interno |
+| `docs` | `mkdocs` |
+| `include_code_scaffold` | **`Yes`**; sin él no se generan `sql/` ni `extraer()` |
+
+### 3. Crea el ambiente e instala las dependencias
+
+**Linux/macOS**
+
+```bash
+cd proyecto_prueba
+python3 -m venv .venv
+source .venv/bin/activate
+make requirements
+```
+
+**Windows**: `make` no viene instalado, así que ejecuta los comandos directamente. Si PowerShell bloquea la activación del ambiente, ejecuta antes `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+
+```powershell
+cd proyecto_prueba
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 4. Verifica que funcione
+
+```bash
+make              # ayuda: "Reglas disponibles: ..."
+make lint         # "All checks passed!"
+make data         # "Procesamiento del conjunto de datos terminado."
+```
+
+`make test` falla a propósito hasta que escribas tus propias pruebas: la prueba de ejemplo de `tests/` es `assert False`.
+
+### 5. Conecta tu base de datos
+
+1. En `.env`, quita el `#` de `DATABASE_URL` y llena tus datos:
+   `DATABASE_URL=postgresql+psycopg2://usuario:contraseña@servidor:5432/base_de_datos`
+2. Reemplaza `proyecto_prueba/sql/01_clientes.sql` por una consulta real.
+3. Pruébala en Python, con el ambiente activado:
+
+   ```python
+   from proyecto_prueba.dataset import extraer
+
+   clientes = extraer("01_clientes", fecha_inicio="2025-01-01", fecha_fin="2026-01-01")
+   clientes.head()
+   ```
+
+### 6. Empieza el proyecto
+
+- Abre `crisp_dm/README.md` y empieza por `crisp_dm/1-comprension-del-negocio.md`.
+- Pon el proyecto bajo control de versiones. `.env`, `.venv/` y `data/` ya están en `.gitignore`, así que tus credenciales, el ambiente y los datos no entran a git:
+
+  ```bash
+  git init && git add . && git commit -m "Proyecto inicial desde la plantilla"
+  ```
+
+## La estructura de carpetas resultante
 
 La estructura de carpetas de tu proyecto nuevo se verá más o menos así (según las opciones que elijas):
 
