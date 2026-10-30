@@ -1,4 +1,4 @@
-# Cookiecutter Data Science
+# Cookiecutter Data Science + CRISP-DM
 
 _A logical, reasonably standardized but flexible project structure for doing and sharing data science work._
 
@@ -9,9 +9,37 @@ _A logical, reasonably standardized but flexible project structure for doing and
 </a>
 [![tests](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml/badge.svg)](https://github.com/drivendataorg/cookiecutter-data-science/actions/workflows/tests.yml)
 
+> **This is a fork of [Cookiecutter Data Science](https://github.com/drivendataorg/cookiecutter-data-science), created and maintained by [DrivenData](https://www.drivendata.org/).** All credit for the template goes to DrivenData and its contributors. The only change is a CRISP-DM methodology folder added to every generated project (see [This fork](#this-fork-crisp-dm-methodology) and [Credits and license](#credits-and-license)).
+
 **Cookiecutter Data Science (CCDS)** is a tool for setting up a data science project template that incorporates best practices. To learn more about CCDS's philosophy, visit the [project homepage](https://cookiecutter-data-science.drivendata.org/).
 
 > ℹ️ Cookiecutter Data Science v2 has changed from v1. It now requires installing the new cookiecutter-data-science Python package, which extends the functionality of the [cookiecutter](https://cookiecutter.readthedocs.io/en/stable/README.html) templating utility. Use the provided `ccds` command-line program instead of `cookiecutter`.
+
+## This fork: CRISP-DM methodology
+
+This repository is CCDS v2.3.0 with one addition: every generated project gets a `crisp_dm/` folder with one document per CRISP-DM phase (business understanding, data understanding, data preparation, modeling, evaluation and deployment). Each document lists the CRISP-DM tasks of the phase, the output of each task and an exit checklist. `crisp_dm/README.md` tracks the status of each phase, maps the phases to the CCDS folders and logs each return to an earlier phase.
+
+**Generating a project.** The hooks import helper functions from the installed `ccds` package, so install the version that matches this template. Pass the `crisp-dm` branch: by default `ccds` checks out the tag of the installed version (`v2.3.0`), which is the original template without CRISP-DM.
+
+```bash
+pipx install cookiecutter-data-science==2.3.0
+ccds https://github.com/enriquearriola-blip/cookiecutter-data-science-crisp-dm -c crisp-dm
+```
+
+**Defining your methodology.** Fork or clone this repository and edit the files in `{{ cookiecutter.repo_name }}/crisp_dm/`. Every project generated afterwards gets your version; projects already generated are not affected. The files are Jinja templates, so they can use the CCDS variables, such as `{{ cookiecutter.project_name }}` or `{{ cookiecutter.author_name }}`, and literal double braces in the text must be escaped. To generate from a local copy, pass its path, which uses the files as they are on disk:
+
+```bash
+ccds path/to/cookiecutter-data-science-crisp-dm
+```
+
+**Updating from upstream.** The addition lives on the `crisp-dm` branch, the default branch of this repository. It touches only `{{ cookiecutter.repo_name }}/crisp_dm/` (new), the directory trees in `{{ cookiecutter.repo_name }}/README.md` and in this README, the title and fork notes of this README, and the expected files in `tests/test_creation.py`.
+
+```bash
+git remote add upstream https://github.com/drivendataorg/cookiecutter-data-science.git  # once
+git fetch upstream --tags
+git merge v2.4.0                                       # the new release
+pipx install --force cookiecutter-data-science==2.4.0  # keep the package in step with the template
+```
 
 ## Installation
 
@@ -44,6 +72,8 @@ The directory structure of your new project will look something like this (depen
 ├── LICENSE            <- Open-source license if one is chosen
 ├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md          <- The top-level README for developers using this project.
+├── crisp_dm           <- CRISP-DM methodology: one document per phase; start at crisp_dm/README.md
+│
 ├── data
 │   ├── external       <- Data from third party sources.
 │   ├── interim        <- Intermediate data that has been transformed.
@@ -122,3 +152,9 @@ pip install -r dev-requirements.txt
 ```bash
 pytest tests
 ```
+
+## Credits and license
+
+Cookiecutter Data Science is created and maintained by [DrivenData](https://www.drivendata.org/) and its [contributors](https://github.com/drivendataorg/cookiecutter-data-science/graphs/contributors). The original repository is [drivendataorg/cookiecutter-data-science](https://github.com/drivendataorg/cookiecutter-data-science) and its documentation is at [cookiecutter-data-science.drivendata.org](https://cookiecutter-data-science.drivendata.org/). Everything in this repository except the CRISP-DM addition is their work, used under the MIT license; the original copyright notice is kept unchanged in [LICENSE](LICENSE), and the CRISP-DM addition is distributed under the same license.
+
+The CRISP-DM documents follow the phases, tasks and outputs of the _CRISP-DM 1.0 Step-by-step data mining guide_ (Chapman et al., 2000), written by the CRISP-DM consortium.

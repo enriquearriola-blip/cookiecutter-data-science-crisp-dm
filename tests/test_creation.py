@@ -58,6 +58,7 @@ def verify_folders(root, config):
     """Tests that expected folders and only expected folders exist."""
     expected_dirs = [
         ".",
+        "crisp_dm",
         "data",
         "data/external",
         "data/interim",
@@ -101,6 +102,13 @@ def verify_files(root, config):
         "pyproject.toml",
         ".env",
         ".gitignore",
+        "crisp_dm/README.md",
+        "crisp_dm/1-business-understanding.md",
+        "crisp_dm/2-data-understanding.md",
+        "crisp_dm/3-data-preparation.md",
+        "crisp_dm/4-modeling.md",
+        "crisp_dm/5-evaluation.md",
+        "crisp_dm/6-deployment.md",
         "data/external/.gitkeep",
         "data/interim/.gitkeep",
         "data/processed/.gitkeep",
