@@ -1,5 +1,5 @@
 #################################################################################
-# GLOBALS                                                                       #
+# VARIABLES GLOBALES                                                            #
 #################################################################################
 
 PROJECT_NAME = {{ cookiecutter.repo_name }}
@@ -7,11 +7,11 @@ PYTHON_VERSION = {{ cookiecutter.python_version_number }}
 PYTHON_INTERPRETER = python
 
 #################################################################################
-# COMMANDS                                                                      #
+# COMANDOS                                                                      #
 #################################################################################
 
 {% if cookiecutter.dependency_file != 'none' %}
-## Install Python dependencies
+## Instala las dependencias de Python
 .PHONY: requirements
 requirements:
 	{% if "requirements.txt" == cookiecutter.dependency_file -%}
@@ -41,33 +41,33 @@ requirements:
 {% endif %}
 
 
-## Delete all compiled Python files
+## Borra todos los archivos compilados de Python
 .PHONY: clean
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 
 {% if cookiecutter.linting_and_formatting == 'ruff' %}
-## Lint using ruff (use `make format` to do formatting)
+## Revisa el estilo con ruff (usa `make format` para dar formato)
 .PHONY: lint
 lint:
 	ruff format --check
 	ruff check
 
-## Format source code with ruff
+## Da formato al código fuente con ruff
 .PHONY: format
 format:
 	ruff check --fix
 	ruff format
 {% elif cookiecutter.linting_and_formatting == 'flake8+black+isort' %}
-## Lint using flake8, black, and isort (use `make format` to do formatting)
+## Revisa el estilo con flake8, black e isort (usa `make format` para dar formato)
 .PHONY: lint
 lint:
 	flake8 {{ cookiecutter.module_name }}
 	isort --check --diff {{ cookiecutter.module_name }}
 	black --check {{ cookiecutter.module_name }}
 
-## Format source code with black
+## Da formato al código fuente con black
 .PHONY: format
 format:
 	isort {{ cookiecutter.module_name }}
@@ -75,7 +75,7 @@ format:
 {% endif %}
 
 {% if cookiecutter.testing_framework != 'none' %}
-## Run tests
+## Corre las pruebas
 .PHONY: test
 test:
 {%- if cookiecutter.testing_framework == 'unittest' %}
@@ -86,7 +86,7 @@ test:
 {%- endif -%}
 
 {% if not cookiecutter.dataset_storage.none %}
-## Download Data from storage system
+## Descarga los datos del almacenamiento en la nube
 .PHONY: sync_data_down
 sync_data_down:
 	{% if cookiecutter.dataset_storage.s3 -%}
@@ -99,7 +99,7 @@ sync_data_down:
 	gsutil -m rsync -r gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/ data/
 	{% endif %}
 
-## Upload Data to storage system
+## Sube los datos al almacenamiento en la nube
 .PHONY: sync_data_up
 sync_data_up:
 	{% if cookiecutter.dataset_storage.s3 -%}
@@ -114,7 +114,7 @@ sync_data_up:
 {% endif %}
 
 {% if cookiecutter.environment_manager != 'none' %}
-## Set up Python interpreter environment
+## Crea el ambiente del intérprete de Python
 .PHONY: create_environment
 create_environment:
 	{% if cookiecutter.environment_manager == 'conda' -%}
@@ -123,56 +123,57 @@ create_environment:
 	{% else -%}
 	conda env create --name $(PROJECT_NAME) -f environment.yml
 	{% endif %}
-	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
+	@echo ">>> Ambiente de conda creado. Actívalo con:\nconda activate $(PROJECT_NAME)"
 	{% elif cookiecutter.environment_manager == 'virtualenv' -%}
 	@bash -c "if [ ! -z `which virtualenvwrapper.sh` ]; then source `which virtualenvwrapper.sh`; mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); else mkvirtualenv.bat $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); fi"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
+	@echo ">>> Nuevo virtualenv creado. Actívalo con:\nworkon $(PROJECT_NAME)"
 	{% elif cookiecutter.environment_manager == 'pipenv' -%}
 	pipenv --python $(PYTHON_VERSION)
-	@echo ">>> New pipenv created. Activate with:\npipenv shell"
+	@echo ">>> Nuevo ambiente de pipenv creado. Actívalo con:\npipenv shell"
 	{% elif cookiecutter.environment_manager == 'uv' -%}
 	uv venv --python $(PYTHON_VERSION)
-	@echo ">>> New uv virtual environment created. Activate with:"
+	@echo ">>> Nuevo ambiente virtual de uv creado. Actívalo con:"
 	@echo ">>> Windows: .\\\\.venv\\\\Scripts\\\\activate"
 	@echo ">>> Unix/macOS: source ./.venv/bin/activate"
 	{% elif cookiecutter.environment_manager == 'pixi' -%}
 	{% if cookiecutter.dependency_file == 'pixi.toml' %}
-	@echo ">>> Pixi environment will be created when running 'make requirements'"
+	@echo ">>> El ambiente de Pixi se creará al ejecutar 'make requirements'"
 	{% else %}
-	@echo ">>> Pixi environment configured in pyproject.toml. Run 'make requirements' to install dependencies."
+	@echo ">>> Ambiente de Pixi configurado en pyproject.toml. Ejecuta 'make requirements' para instalar las dependencias."
 	{% endif %}
-	@echo ">>> Activate with:\npixi shell"
+	@echo ">>> Actívalo con:\npixi shell"
 	{% elif cookiecutter.environment_manager == 'poetry' -%}
 	poetry env use $(PYTHON_VERSION)
-	@echo ">>> Poetry environment created. Activate with: "
+	@echo ">>> Ambiente de Poetry creado. Actívalo con: "
 	@echo '$$(poetry env activate)'
-	@echo ">>> Or run commands with:\npoetry run <command>"
+	@echo ">>> O ejecuta comandos con:\npoetry run <comando>"
 {% endif %}
 {% endif %}
 
 
 #################################################################################
-# PROJECT RULES                                                                 #
+# REGLAS DEL PROYECTO                                                           #
 #################################################################################
 
 {% if cookiecutter.include_code_scaffold == 'Yes' %}
-## Make dataset
+## Genera el conjunto de datos
 .PHONY: data
 data: requirements
 	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/dataset.py
 {% endif %}
 
 #################################################################################
-# Self Documenting Commands                                                     #
+# Comandos autodocumentados                                                     #
 #################################################################################
 
 .DEFAULT_GOAL := help
 
 define PRINT_HELP_PYSCRIPT
 import re, sys; \
+sys.stdin.reconfigure(encoding='utf-8'); \
 lines = '\n'.join([line for line in sys.stdin]); \
 matches = re.findall(r'\n## (.*)\n[\s\S]+?\n([a-zA-Z_-]+):', lines); \
-print('Available rules:\n'); \
+print('Reglas disponibles:\n'); \
 print('\n'.join(['{:25}{}'.format(*reversed(match)) for match in matches]))
 endef
 export PRINT_HELP_PYSCRIPT

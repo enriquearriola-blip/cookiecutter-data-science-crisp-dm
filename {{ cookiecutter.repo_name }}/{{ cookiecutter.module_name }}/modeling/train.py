@@ -11,19 +11,19 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
+    # ---- REEMPLAZA LAS RUTAS POR DEFECTO SEGÚN CONVENGA ----
     features_path: Path = PROCESSED_DATA_DIR / "features.csv",
     labels_path: Path = PROCESSED_DATA_DIR / "labels.csv",
     model_path: Path = MODELS_DIR / "model.pkl",
-    # -----------------------------------------
+    # --------------------------------------------------------
 ):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Training some model...")
+    # ---- REEMPLAZA ESTO CON TU PROPIO CÓDIGO ----
+    logger.info("Entrenando un modelo...")
     for i in tqdm(range(10), total=10):
         if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Modeling training complete.")
-    # -----------------------------------------
+            logger.info("Algo pasó en la iteración 5.")
+    logger.success("Entrenamiento del modelo terminado.")
+    # ---------------------------------------------
 
 
 if __name__ == "__main__":

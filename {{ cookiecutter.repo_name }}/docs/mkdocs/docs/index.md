@@ -1,23 +1,23 @@
-# {{ cookiecutter.project_name }} documentation!
+# Documentación de {{ cookiecutter.project_name }}
 {% if cookiecutter.project_description is not none %}
-## Description
+## Descripción
 
 {{ cookiecutter.description}}
 {% endif %}
-## Commands
+## Comandos
 
-The Makefile contains the central entry points for common tasks related to this project.
+El Makefile contiene los puntos de entrada principales para las tareas comunes de este proyecto.
 {% if not cookiecutter.dataset_storage.none %}
-### Syncing data to cloud storage
+### Sincronizar los datos con el almacenamiento en la nube
 
 {% if cookiecutter.dataset_storage.s3 -%}
-* `make sync_data_up` will use `aws s3 sync` to recursively sync files in `data/` up to `s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/`.
-* `make sync_data_down` will use `aws s3 sync` to recursively sync files from `s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/` to `data/`.
+* `make sync_data_up` usa `aws s3 sync` para sincronizar recursivamente los archivos de `data/` hacia `s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/`.
+* `make sync_data_down` usa `aws s3 sync` para sincronizar recursivamente los archivos de `s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/` hacia `data/`.
 {% elif cookiecutter.dataset_storage.azure -%}
-* `make sync_data_up` will use `az storage blob upload-batch -d` to recursively sync files in `data/` up to `{{ cookiecutter.dataset_storage.azure.container }}/data/`.
-* `make sync_data_down` will use `az storage blob upload-batch -d` to recursively sync files from `{{ cookiecutter.dataset_storage.azure.container }}/data/` to `data/`.
+* `make sync_data_up` usa `az storage blob upload-batch -d` para sincronizar recursivamente los archivos de `data/` hacia `{{ cookiecutter.dataset_storage.azure.container }}/data/`.
+* `make sync_data_down` usa `az storage blob download-batch -s` para sincronizar recursivamente los archivos de `{{ cookiecutter.dataset_storage.azure.container }}/data/` hacia `data/`.
 {% elif cookiecutter.dataset_storage.gcs -%}
-* `make sync_data_up` will use `gsutil rsync` to recursively sync files in `data/` up to `gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/`.
-* `make sync_data_down` will use `gsutil rsync` to recursively sync files in `gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/` to `data/`.
+* `make sync_data_up` usa `gsutil rsync` para sincronizar recursivamente los archivos de `data/` hacia `gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/`.
+* `make sync_data_down` usa `gsutil rsync` para sincronizar recursivamente los archivos de `gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/` hacia `data/`.
 {% endif %}
 {% endif %}

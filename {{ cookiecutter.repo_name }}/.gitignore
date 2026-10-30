@@ -1,7 +1,7 @@
-# Data
+# Datos
 /data/
 
-# Mac OS-specific storage files
+# Archivos de almacenamiento propios de Mac OS
 .DS_Store
 
 # vim

@@ -1,69 +1,70 @@
 # CRISP-DM: {{ cookiecutter.project_name }}
 
-This folder documents the project with **CRISP-DM** (Cross-Industry Standard Process for Data Mining). There is one
-document per phase. Each one lists the CRISP-DM tasks of the phase, the output each task produces and an exit checklist.
+Esta carpeta documenta el proyecto con **CRISP-DM** (Cross-Industry Standard Process for Data Mining, proceso estándar
+intersectorial para minería de datos). Hay un documento por fase. Cada uno enumera las tareas CRISP-DM de la fase, el
+resultado que produce cada tarea y una lista de verificación de cierre.
 
-CRISP-DM is iterative: going back to an earlier phase when something new is learned is expected, not a failure. Record
-each return in the [iteration log](#iteration-log).
+CRISP-DM es iterativo: regresar a una fase anterior cuando se aprende algo nuevo es lo esperado, no un fracaso.
+Anota cada regreso en el [registro de iteraciones](#registro-de-iteraciones).
 
 ```
- 1. Business understanding ◄────────────────┐
-        │  ▲                                │
-        ▼  │                                │
- 2. Data understanding                      │
-        │                                   │
-        ▼                                   │
- 3. Data preparation ◄──────┐               │
-        │                   │               │
-        ▼                   │               │
- 4. Modeling ───────────────┘               │
-        │                                   │
-        ▼                                   │
- 5. Evaluation ─────────────────────────────┘
+ 1. Comprensión del negocio ◄────────────────────┐
+        │  ▲                                     │
+        ▼  │                                     │
+ 2. Comprensión de los datos                     │
+        │                                        │
+        ▼                                        │
+ 3. Preparación de los datos ◄───┐               │
+        │                        │               │
+        ▼                        │               │
+ 4. Modelado ────────────────────┘               │
+        │                                        │
+        ▼                                        │
+ 5. Evaluación ──────────────────────────────────┘
         │
         ▼
- 6. Deployment
+ 6. Despliegue
 ```
 
-## Status
+## Estado
 
-| Phase | Document | Status | Owner | Last updated |
+| Fase | Documento | Estado | Responsable | Última actualización |
 |---|---|---|---|---|
-| 1. Business understanding | [1-business-understanding.md](1-business-understanding.md) | Not started | {{ cookiecutter.author_name }} | |
-| 2. Data understanding | [2-data-understanding.md](2-data-understanding.md) | Not started | {{ cookiecutter.author_name }} | |
-| 3. Data preparation | [3-data-preparation.md](3-data-preparation.md) | Not started | {{ cookiecutter.author_name }} | |
-| 4. Modeling | [4-modeling.md](4-modeling.md) | Not started | {{ cookiecutter.author_name }} | |
-| 5. Evaluation | [5-evaluation.md](5-evaluation.md) | Not started | {{ cookiecutter.author_name }} | |
-| 6. Deployment | [6-deployment.md](6-deployment.md) | Not started | {{ cookiecutter.author_name }} | |
+| 1. Comprensión del negocio | [1-comprension-del-negocio.md](1-comprension-del-negocio.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
+| 2. Comprensión de los datos | [2-comprension-de-los-datos.md](2-comprension-de-los-datos.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
+| 3. Preparación de los datos | [3-preparacion-de-los-datos.md](3-preparacion-de-los-datos.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
+| 4. Modelado | [4-modelado.md](4-modelado.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
+| 5. Evaluación | [5-evaluacion.md](5-evaluacion.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
+| 6. Despliegue | [6-despliegue.md](6-despliegue.md) | Sin iniciar | {{ cookiecutter.author_name }} | |
 
-Status values: Not started, In progress, Done, Revisited.
+Valores de estado: Sin iniciar, En curso, Terminada, Revisitada.
 
-## Where each phase lives in this project
+## Dónde está cada fase en este proyecto
 
-| Phase | Notebooks (`notebooks/`) | Code (`{{ cookiecutter.module_name }}/`) | Data and outputs |
+| Fase | Notebooks (`notebooks/`) | Código (`{{ cookiecutter.module_name }}/`) | Datos y salidas |
 |---|---|---|---|
-| 1. Business understanding | | | `references/`: requirements, glossary, stakeholder material |
-| 2. Data understanding | `0.xx-*`: data exploration | `dataset.py` | `data/raw/`, `data/external/`, `references/`: data dictionaries |
-| 3. Data preparation | `1.xx-*`: cleaning and feature creation | `dataset.py`, `features.py` | `data/interim/`, `data/processed/` |
-| 4. Modeling | `3.xx-*`: modeling | `modeling/train.py` | `models/` |
-| 5. Evaluation | `2.xx-*`: visualizations | `modeling/predict.py`, `plots.py` | `reports/`, `reports/figures/` |
-| 6. Deployment | `4.xx-*`: publication | the `{{ cookiecutter.module_name }}` package | `models/`, `reports/`, `docs/` |
+| 1. Comprensión del negocio | | | `references/`: requerimientos, glosario, material de los interesados |
+| 2. Comprensión de los datos | `0.xx-*`: exploración de datos | `dataset.py` | `data/raw/`, `data/external/`, `references/`: diccionarios de datos |
+| 3. Preparación de los datos | `1.xx-*`: limpieza y creación de variables | `dataset.py`, `features.py` | `data/interim/`, `data/processed/` |
+| 4. Modelado | `3.xx-*`: modelado | `modeling/train.py` | `models/` |
+| 5. Evaluación | `2.xx-*`: visualizaciones | `modeling/predict.py`, `plots.py` | `reports/`, `reports/figures/` |
+| 6. Despliegue | `4.xx-*`: publicación | el paquete `{{ cookiecutter.module_name }}` | `models/`, `reports/`, `docs/` |
 {% if cookiecutter.include_code_scaffold == "No" %}
-The code scaffold was not generated for this project; the file names above are where Cookiecutter Data Science
-suggests putting that code.
+En este proyecto no se generó el código base; los nombres de archivo de arriba indican dónde sugiere Cookiecutter Data
+Science poner ese código.
 {% endif %}
-## How to use these documents
+## Cómo usar estos documentos
 
-1. Start with phase 1 before touching the data, and agree on the success criteria with the people who will use the
-   results.
-2. Fill in each document while doing the work, not at the end. Replace the text in _italics_ with the answer; when a
-   task does not apply, write "Not applicable" and why.
-3. Link to the evidence (notebooks, figures, reports, code) instead of copying results into the documents.
-4. A phase is done when its exit checklist is complete. Update the status table above.
-5. When the work sends you back to an earlier phase, add a row to the iteration log and set that phase to Revisited.
+1. Empieza por la fase 1 antes de tocar los datos y acuerda los criterios de éxito con quienes usarán los resultados.
+2. Llena cada documento mientras haces el trabajo, no al final. Reemplaza el texto en _cursiva_ con la respuesta; cuando
+   una tarea no aplique, escribe "No aplica" y por qué.
+3. Enlaza la evidencia (notebooks, figuras, reportes, código) en lugar de copiar resultados en los documentos.
+4. Una fase está terminada cuando su lista de verificación de cierre está completa. Actualiza la tabla de estado.
+5. Cuando el trabajo te regrese a una fase anterior, agrega una fila al registro de iteraciones y marca esa fase como
+   Revisitada.
 
-## Iteration log
+## Registro de iteraciones
 
-| Date | From phase | Back to phase | What was learned | Decision |
+| Fecha | Desde la fase | Regreso a la fase | Qué se aprendió | Decisión |
 |---|---|---|---|---|
 | | | | | |

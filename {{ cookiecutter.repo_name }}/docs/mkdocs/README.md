@@ -1,12 +1,12 @@
-Generating the docs
+Generar la documentación
 ----------
 
-Use [mkdocs](http://www.mkdocs.org/) structure to update the documentation. 
+Usa la estructura de [mkdocs](http://www.mkdocs.org/) para actualizar la documentación.
 
-Build locally with:
+Compílala localmente con:
 
     mkdocs build
 
-Serve locally with:
+Sírvela localmente con:
 
     mkdocs serve

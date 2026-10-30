@@ -103,12 +103,12 @@ def verify_files(root, config):
         ".env",
         ".gitignore",
         "crisp_dm/README.md",
-        "crisp_dm/1-business-understanding.md",
-        "crisp_dm/2-data-understanding.md",
-        "crisp_dm/3-data-preparation.md",
-        "crisp_dm/4-modeling.md",
-        "crisp_dm/5-evaluation.md",
-        "crisp_dm/6-deployment.md",
+        "crisp_dm/1-comprension-del-negocio.md",
+        "crisp_dm/2-comprension-de-los-datos.md",
+        "crisp_dm/3-preparacion-de-los-datos.md",
+        "crisp_dm/4-modelado.md",
+        "crisp_dm/5-evaluacion.md",
+        "crisp_dm/6-despliegue.md",
         "data/external/.gitkeep",
         "data/interim/.gitkeep",
         "data/processed/.gitkeep",
@@ -204,8 +204,8 @@ def verify_makefile_commands(root, config):
     stdout_output, stderr_output = _decode_print_stdout_stderr(result)
 
     # Check that makefile help ran successfully
-    assert "Available rules:" in stdout_output
-    assert "clean                    Delete all compiled Python files" in stdout_output
+    assert "Reglas disponibles:" in stdout_output
+    assert "clean                    Borra todos los archivos compilados de Python" in stdout_output
 
     # Check that linting and formatting ran successfully
     if config["environment_manager"] in ["pixi", "poetry"]:

@@ -1,6 +1,6 @@
-Getting started
-===============
+Primeros pasos
+==============
 
-This is where you describe how to get set up on a clean install, including the
-commands necessary to get the raw data (using the `sync_data_from_s3` command,
-for example), and then how to make the cleaned, final data sets.
+Aquí se describe cómo preparar el proyecto en una instalación limpia, incluidos los
+comandos necesarios para obtener los datos crudos (por ejemplo, con el comando
+`make sync_data_down`), y después cómo generar los conjuntos de datos limpios y finales.

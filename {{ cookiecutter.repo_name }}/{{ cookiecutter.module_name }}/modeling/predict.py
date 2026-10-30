@@ -11,19 +11,19 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
+    # ---- REEMPLAZA LAS RUTAS POR DEFECTO SEGÚN CONVENGA ----
     features_path: Path = PROCESSED_DATA_DIR / "test_features.csv",
     model_path: Path = MODELS_DIR / "model.pkl",
     predictions_path: Path = PROCESSED_DATA_DIR / "test_predictions.csv",
-    # -----------------------------------------
+    # --------------------------------------------------------
 ):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Performing inference for model...")
+    # ---- REEMPLAZA ESTO CON TU PROPIO CÓDIGO ----
+    logger.info("Haciendo inferencia con el modelo...")
     for i in tqdm(range(10), total=10):
         if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Inference complete.")
-    # -----------------------------------------
+            logger.info("Algo pasó en la iteración 5.")
+    logger.success("Inferencia terminada.")
+    # ---------------------------------------------
 
 
 if __name__ == "__main__":
