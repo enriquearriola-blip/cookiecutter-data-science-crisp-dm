@@ -6,16 +6,22 @@ build
 chardet
 flake8
 isort
+loguru
 mkdocs
 mkdocs-material
 mkdocs-gen-files
 mkdocs-include-markdown-plugin
 pexpect
+pandas
 pipenv
 poetry
 pytest
+python-dotenv
+sqlalchemy
 termynal
+tqdm
 twine
+typer
 uv
 virtualenvwrapper; sys_platform != 'win32'
 virtualenvwrapper-win; sys_platform == 'win32'

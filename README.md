@@ -21,7 +21,7 @@ Este repositorio es CCDS v2.3.0 con tres cambios:
 
 - **Español.** Está en español todo lo que lee quien usa la plantilla: este README, y en cada proyecto generado el README, la ayuda y los mensajes del Makefile, los comentarios y mensajes del código base y la documentación de mkdocs. Los nombres de carpetas, archivos, variables y opciones se quedan en inglés, porque son el estándar de CCDS y el paquete `ccds` depende de ellos. Las preguntas que hace `ccds` al generar un proyecto (por ejemplo, `project_name` o `Select docs`) también salen en inglés, porque vienen del paquete instalado.
 - **CRISP-DM.** Cada proyecto generado incluye la carpeta `crisp_dm/` con un documento por fase de CRISP-DM (comprensión del negocio, comprensión de los datos, preparación de los datos, modelado, evaluación y despliegue). Cada documento enumera las tareas CRISP-DM de la fase, el resultado de cada tarea y una lista de verificación de cierre. `crisp_dm/README.md` lleva el estado de cada fase, relaciona las fases con las carpetas de CCDS y registra cada regreso a una fase anterior.
-- **Consultas SQL.** El código base incluye la carpeta `sql/` para las consultas de extracción, una por archivo, y la función `extraer()` en `dataset.py`, que ejecuta una consulta con sus parámetros y regresa un DataFrame. La conexión se define en `.env` como `DATABASE_URL`; por defecto se instalan `sqlalchemy`, el driver de PostgreSQL (`psycopg2-binary`), `pandas` y `pyarrow`. Para otra base de datos, cambia el driver en las dependencias del proyecto y la URL.
+- **Consultas SQL.** El código base incluye la carpeta `sql/` para las consultas de extracción, una por archivo, y la función `extraer()` en `dataset.py`, que ejecuta una consulta con sus parámetros y regresa un DataFrame. La conexión se define en `.env` como `DATABASE_URL`; por defecto se instalan `sqlalchemy`, el driver de PostgreSQL (`psycopg2-binary`), `pandas` y `pyarrow`. Para Yellowbrick, `extraer()` aplica automáticamente la compatibilidad de versión si SQLAlchemy la necesita, como se explica en el paso 5. Para otra base de datos, cambia el driver en las dependencias del proyecto y la URL.
 
 **Definir tu metodología.** Haz un fork o clona este repositorio y edita los archivos de `{{ cookiecutter.repo_name }}/crisp_dm/`. Cada proyecto que generes después tendrá tu versión; los proyectos ya generados no cambian. Los archivos son plantillas Jinja, así que pueden usar las variables de CCDS, como `{{ cookiecutter.project_name }}` o `{{ cookiecutter.author_name }}`, y las llaves dobles literales del texto se deben escapar. Para generar un proyecto desde una copia local, pasa su ruta; se usan los archivos tal como están en disco:
 
@@ -133,8 +133,17 @@ make data         # "Procesamiento del conjunto de datos terminado."
 
 1. En `.env`, quita el `#` de `DATABASE_URL` y llena tus datos:
    `DATABASE_URL=postgresql+psycopg2://usuario:contraseña@servidor:5432/base_de_datos`
-2. Reemplaza `proyecto_prueba/sql/01_clientes.sql` por una consulta real.
-3. Pruébala en Python, con el ambiente activado:
+2. **Si usas Yellowbrick**, `extraer()` detecta el error específico `Could not determine version from string 'Yellowbrick Database version ...'` de SQLAlchemy y reintenta la conexión una sola vez con la compatibilidad de versión. No cambia `os.environ` ni la configuración global del servidor; los errores de consulta no se reintentan. No necesitas agregar código de conexión a tus scripts o notebooks.
+
+   Opcionalmente, para evitar el primer intento de detección en cada extracción, quita el `#` de `PGOPTIONS` en `.env`, conservando las comillas simples y la barra antes del espacio:
+
+   ```dotenv
+   PGOPTIONS='-c override_version=PostgreSQL\ 9.5.10'
+   ```
+
+   `config.py` carga `.env` al importar `dataset`, así que esta opción también se aplica a todas las extracciones. Para PostgreSQL, deja `PGOPTIONS` comentado.
+3. Reemplaza `proyecto_prueba/sql/01_clientes.sql` por una consulta real. `proyecto_prueba` es el `module_name` del ejemplo; usa el nombre elegido al generar tu proyecto.
+4. Con el ambiente activado, abre una consola Python (`python -m IPython`) o un notebook que use ese ambiente y ejecuta:
 
    ```python
    from proyecto_prueba.dataset import extraer
@@ -142,6 +151,8 @@ make data         # "Procesamiento del conjunto de datos terminado."
    clientes = extraer("01_clientes", fecha_inicio="2025-01-01", fecha_fin="2026-01-01")
    clientes.head()
    ```
+
+Si editaste `.env` con la consola o el notebook abierto, reinicia la consola o el kernel para cargar los cambios. Para una prueba rápida, limita las filas en la consulta SQL con `LIMIT 5`: `head()` solo limita lo que se muestra, no lo que se extrae.
 
 ### 6. Empieza el proyecto
 
