@@ -156,10 +156,10 @@ create_environment:
 #################################################################################
 
 {% if cookiecutter.include_code_scaffold == 'Yes' %}
-## Genera el conjunto de datos
+## Ejecuta las consultas SQL y guarda sus resultados en data/raw/
 .PHONY: data
 data: requirements
-	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/dataset.py
+	$(PYTHON_INTERPRETER) -m {{ cookiecutter.module_name }}.dataset $(ARGS)
 {% endif %}
 
 #################################################################################

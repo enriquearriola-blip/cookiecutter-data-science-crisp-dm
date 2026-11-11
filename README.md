@@ -124,7 +124,7 @@ pip install -r requirements.txt
 ```bash
 make              # ayuda: "Reglas disponibles: ..."
 make lint         # "All checks passed!"
-make data         # "Procesamiento del conjunto de datos terminado."
+python -m proyecto_prueba.dataset --help
 ```
 
 `make test` falla a propósito hasta que escribas tus propias pruebas: la prueba de ejemplo de `tests/` es `assert False`.
@@ -143,7 +143,23 @@ make data         # "Procesamiento del conjunto de datos terminado."
 
    `config.py` carga `.env` al importar `dataset`, así que esta opción también se aplica a todas las extracciones. Para PostgreSQL, deja `PGOPTIONS` comentado.
 3. Reemplaza `proyecto_prueba/sql/01_clientes.sql` por una consulta real. `proyecto_prueba` es el `module_name` del ejemplo; usa el nombre elegido al generar tu proyecto.
-4. Con el ambiente activado, abre una consola Python (`python -m IPython`) o un notebook que use ese ambiente y ejecuta:
+4. Con el ambiente activado, ejecuta este comando en la terminal para extraer todas las consultas:
+
+   ```bash
+   python -m proyecto_prueba.dataset
+   ```
+
+   El comando recorre los archivos `.sql` en orden alfabético, ejecuta cada consulta y guarda su resultado como `data/raw/<nombre>.parquet`, sin modificar los datos. Procesa una consulta a la vez y omite los Parquet existentes; usa `--overwrite` para reemplazarlos explícitamente. `make data` ejecuta el mismo proceso.
+
+   Si las consultas usan parámetros como `:fecha_inicio`, pásalos una sola vez para el lote:
+
+   ```bash
+   python -m proyecto_prueba.dataset -p fecha_inicio=2025-01-01 -p fecha_fin=2026-01-01
+   ```
+
+   Con Make, usa `make data ARGS="-p fecha_inicio=2025-01-01 -p fecha_fin=2026-01-01"`. Puedes cambiar la carpeta de salida con `--output-dir`.
+
+   Para extraer una consulta individual desde Python o un notebook, sigue disponible esta función:
 
    ```python
    from proyecto_prueba.dataset import extraer
