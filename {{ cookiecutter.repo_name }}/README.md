@@ -6,6 +6,33 @@
 
 {{cookiecutter.description}}
 
+{% if cookiecutter.include_code_scaffold == "Yes" %}
+## Extracción de datos
+
+Configura `DATABASE_URL` en `.env` y guarda tus consultas en `{{ cookiecutter.module_name }}/sql/`, una por archivo.
+
+**Yellowbrick:** si SQLAlchemy no reconoce la versión del servidor, `extraer()` detecta ese error específico y reintenta la conexión una sola vez con la compatibilidad necesaria. No modifica `os.environ` ni la configuración global del servidor, y no reintenta errores de consulta. No necesitas agregar código de conexión a tus scripts o notebooks.
+
+Opcionalmente, para evitar el primer intento de detección en cada extracción, quita el `#` de esta línea de `.env`, conservando las comillas simples y la barra antes del espacio:
+
+```dotenv
+PGOPTIONS='-c override_version=PostgreSQL\ 9.5.10'
+```
+
+`config.py` carga `.env` al importar `dataset`, por lo que esta opción también se aplica a todas las extracciones. Para PostgreSQL, deja `PGOPTIONS` comentado.
+
+Con el ambiente del proyecto activado, abre una consola Python (`python -m IPython`) o un notebook que use ese ambiente y ejecuta:
+
+```python
+from {{ cookiecutter.module_name }}.dataset import extraer
+
+clientes = extraer("01_clientes", fecha_inicio="2025-01-01", fecha_fin="2026-01-01")
+clientes.head()
+```
+
+Después de editar `.env`, reinicia la consola o el kernel si ya estaba abierto. Para una prueba rápida, agrega `LIMIT 5` a la consulta SQL: `head()` solo limita la visualización, no la extracción.
+{% endif %}
+
 ## Organización del proyecto
 
 ```
@@ -62,4 +89,3 @@
 ```
 
 --------
-
