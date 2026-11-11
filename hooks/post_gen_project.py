@@ -46,7 +46,7 @@ pip_only_packages = [
 ]
 
 # {% if cookiecutter.include_code_scaffold == "Yes" %}
-# dataset.extraer() runs the queries in sql/ against PostgreSQL and saves parquet files;
+# The data command exports PostgreSQL/Yellowbrick COPY CSV and converts it to parquet in batches;
 # skip packages already added (pandas comes with "basic") so TOML files get no duplicate keys
 packages_to_install += [
     p for p in ["pandas", "pyarrow", "sqlalchemy"] if p not in packages_to_install

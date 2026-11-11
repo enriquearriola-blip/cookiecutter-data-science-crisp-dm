@@ -17,7 +17,11 @@ Con el ambiente activado, ejecuta en la terminal:
 python -m {{ cookiecutter.module_name }}.dataset
 ```
 
-El comando ejecuta todos los archivos `.sql` en orden alfabético y guarda cada resultado, sin modificarlo, en `data/raw/<nombre>.parquet`. Procesa una consulta a la vez y omite los Parquet existentes; agrega `--overwrite` para reemplazarlos explícitamente. `make data` ejecuta el mismo proceso.
+El comando ejecuta los archivos `.sql` en orden alfabético. Usa `psycopg2.copy_expert()` para escribir un CSV nativo y convierte ese CSV a Parquet por lotes de lectura de 8 MiB, sin cargar todo en RAM. Conserva ambos archivos: `data/raw/<nombre>.csv` y `data/raw/<nombre>.parquet`. `make data` ejecuta el mismo proceso.
+
+Si ya existe cualquiera de las dos salidas, omite la consulta. Usa `--overwrite` solo para volver a exportar y reemplazar ambos archivos. Los archivos no se publican si falla COPY o la conversión. Prevé espacio para CSV, Parquet y los temporales durante un reemplazo.
+
+La conversión usa los tipos del servidor para preservar texto (incluidos ceros iniciales), nulos, fechas y decimales con precisión conocida. Los tipos no reconocidos y los numéricos sin precisión fija se guardan como texto.
 
 Si las consultas usan parámetros, pásalos una vez para todo el lote:
 
@@ -27,17 +31,9 @@ python -m {{ cookiecutter.module_name }}.dataset -p fecha_inicio=2025-01-01 -p f
 
 Con Make, usa `make data ARGS="-p fecha_inicio=2025-01-01 -p fecha_fin=2026-01-01"`. Puedes cambiar la carpeta de salida con `--output-dir`.
 
-**Yellowbrick:** si SQLAlchemy no reconoce la versión del servidor, `extraer()` detecta ese error específico y reintenta la conexión una sola vez con la compatibilidad necesaria. No modifica `os.environ` ni la configuración global del servidor, y no reintenta errores de consulta. No necesitas agregar código de conexión a tus scripts o notebooks.
+**PostgreSQL y Yellowbrick:** la conexión usa `psycopg2` directamente y no necesita `PGOPTIONS` ni un ajuste de versión. SQLAlchemy solo analiza la URL y los parámetros; no abre conexiones. No se reintentan consultas.
 
-Opcionalmente, para evitar el primer intento de detección en cada extracción, quita el `#` de esta línea de `.env`, conservando las comillas simples y la barra antes del espacio:
-
-```dotenv
-PGOPTIONS='-c override_version=PostgreSQL\ 9.5.10'
-```
-
-`config.py` carga `.env` al importar `dataset`, por lo que esta opción también se aplica a todas las extracciones. Para PostgreSQL, deja `PGOPTIONS` comentado.
-
-Para extraer una consulta individual de forma interactiva, abre una consola Python (`python -m IPython`) o un notebook que use el ambiente del proyecto y ejecuta:
+Para obtener un DataFrame completo de forma interactiva, abre una consola Python (`python -m IPython`) o un notebook que use el ambiente del proyecto y ejecuta (esta función también usa COPY, pero sí carga todo el resultado en RAM):
 
 ```python
 from {{ cookiecutter.module_name }}.dataset import extraer

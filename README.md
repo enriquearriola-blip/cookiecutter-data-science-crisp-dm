@@ -21,7 +21,7 @@ Este repositorio es CCDS v2.3.0 con tres cambios:
 
 - **Español.** Está en español todo lo que lee quien usa la plantilla: este README, y en cada proyecto generado el README, la ayuda y los mensajes del Makefile, los comentarios y mensajes del código base y la documentación de mkdocs. Los nombres de carpetas, archivos, variables y opciones se quedan en inglés, porque son el estándar de CCDS y el paquete `ccds` depende de ellos. Las preguntas que hace `ccds` al generar un proyecto (por ejemplo, `project_name` o `Select docs`) también salen en inglés, porque vienen del paquete instalado.
 - **CRISP-DM.** Cada proyecto generado incluye la carpeta `crisp_dm/` con un documento por fase de CRISP-DM (comprensión del negocio, comprensión de los datos, preparación de los datos, modelado, evaluación y despliegue). Cada documento enumera las tareas CRISP-DM de la fase, el resultado de cada tarea y una lista de verificación de cierre. `crisp_dm/README.md` lleva el estado de cada fase, relaciona las fases con las carpetas de CCDS y registra cada regreso a una fase anterior.
-- **Consultas SQL.** El código base incluye la carpeta `sql/` para las consultas de extracción, una por archivo, y la función `extraer()` en `dataset.py`, que ejecuta una consulta con sus parámetros y regresa un DataFrame. La conexión se define en `.env` como `DATABASE_URL`; por defecto se instalan `sqlalchemy`, el driver de PostgreSQL (`psycopg2-binary`), `pandas` y `pyarrow`. Para Yellowbrick, `extraer()` aplica automáticamente la compatibilidad de versión si SQLAlchemy la necesita, como se explica en el paso 5. Para otra base de datos, cambia el driver en las dependencias del proyecto y la URL.
+- **Consultas SQL.** El código base incluye `sql/` y un comando que exporta cada consulta con `psycopg2.copy_expert()` a CSV y convierte el CSV a Parquet por lotes, conservando ambos archivos. La conexión PostgreSQL/Yellowbrick se define en `.env` como `DATABASE_URL`. SQLAlchemy solo analiza la URL y los parámetros; no crea conexiones ni detecta la versión del servidor. `extraer()` sigue disponible para devolver un DataFrame completo en sesiones interactivas.
 
 **Definir tu metodología.** Haz un fork o clona este repositorio y edita los archivos de `{{ cookiecutter.repo_name }}/crisp_dm/`. Cada proyecto que generes después tendrá tu versión; los proyectos ya generados no cambian. Los archivos son plantillas Jinja, así que pueden usar las variables de CCDS, como `{{ cookiecutter.project_name }}` o `{{ cookiecutter.author_name }}`, y las llaves dobles literales del texto se deben escapar. Para generar un proyecto desde una copia local, pasa su ruta; se usan los archivos tal como están en disco:
 
@@ -133,15 +133,7 @@ python -m proyecto_prueba.dataset --help
 
 1. En `.env`, quita el `#` de `DATABASE_URL` y llena tus datos:
    `DATABASE_URL=postgresql+psycopg2://usuario:contraseña@servidor:5432/base_de_datos`
-2. **Si usas Yellowbrick**, `extraer()` detecta el error específico `Could not determine version from string 'Yellowbrick Database version ...'` de SQLAlchemy y reintenta la conexión una sola vez con la compatibilidad de versión. No cambia `os.environ` ni la configuración global del servidor; los errores de consulta no se reintentan. No necesitas agregar código de conexión a tus scripts o notebooks.
-
-   Opcionalmente, para evitar el primer intento de detección en cada extracción, quita el `#` de `PGOPTIONS` en `.env`, conservando las comillas simples y la barra antes del espacio:
-
-   ```dotenv
-   PGOPTIONS='-c override_version=PostgreSQL\ 9.5.10'
-   ```
-
-   `config.py` carga `.env` al importar `dataset`, así que esta opción también se aplica a todas las extracciones. Para PostgreSQL, deja `PGOPTIONS` comentado.
+2. **PostgreSQL y Yellowbrick:** la conexión usa `psycopg2` directamente. No necesita `PGOPTIONS` ni un ajuste de versión para Yellowbrick. El comando usa `COPY (...) TO STDOUT` mediante `cursor.copy_expert()`; no usa `pandas.read_sql()` ni reintenta consultas.
 3. Reemplaza `proyecto_prueba/sql/01_clientes.sql` por una consulta real. `proyecto_prueba` es el `module_name` del ejemplo; usa el nombre elegido al generar tu proyecto.
 4. Con el ambiente activado, ejecuta este comando en la terminal para extraer todas las consultas:
 
@@ -149,7 +141,11 @@ python -m proyecto_prueba.dataset --help
    python -m proyecto_prueba.dataset
    ```
 
-   El comando recorre los archivos `.sql` en orden alfabético, ejecuta cada consulta y guarda su resultado como `data/raw/<nombre>.parquet`, sin modificar los datos. Procesa una consulta a la vez y omite los Parquet existentes; usa `--overwrite` para reemplazarlos explícitamente. `make data` ejecuta el mismo proceso.
+   El comando recorre los archivos `.sql` en orden alfabético, exporta un CSV nativo y lo convierte a Parquet por lotes de lectura de 8 MiB. Conserva `data/raw/<nombre>.csv` y `data/raw/<nombre>.parquet`, sin cargar el resultado completo en un DataFrame. `make data` ejecuta el mismo proceso.
+
+   Si ya existe cualquiera de las dos salidas, omite esa consulta para proteger los datos anteriores. Usa `--overwrite` solo para volver a exportar y reemplazar ambos archivos. Se necesitan espacio para el CSV y el Parquet; los archivos temporales se limpian si falla COPY o la conversión.
+
+   La conversión usa los tipos del servidor para conservar identificadores de texto, nulos, fechas y decimales con precisión conocida. Los tipos no reconocidos y los numéricos sin precisión fija se conservan como texto en Parquet.
 
    Si las consultas usan parámetros como `:fecha_inicio`, pásalos una sola vez para el lote:
 
@@ -159,7 +155,7 @@ python -m proyecto_prueba.dataset --help
 
    Con Make, usa `make data ARGS="-p fecha_inicio=2025-01-01 -p fecha_fin=2026-01-01"`. Puedes cambiar la carpeta de salida con `--output-dir`.
 
-   Para extraer una consulta individual desde Python o un notebook, sigue disponible esta función:
+   Para devolver un DataFrame completo desde Python o un notebook, sigue disponible esta función (también usa COPY, pero sí carga el resultado completo en RAM):
 
    ```python
    from proyecto_prueba.dataset import extraer

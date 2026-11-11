@@ -15,6 +15,7 @@ pexpect
 pandas
 pipenv
 poetry
+psycopg2-binary
 pyarrow
 pytest
 python-dotenv
