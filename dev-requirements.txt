@@ -15,6 +15,7 @@ pexpect
 pandas
 pipenv
 poetry
+pyarrow
 pytest
 python-dotenv
 sqlalchemy
