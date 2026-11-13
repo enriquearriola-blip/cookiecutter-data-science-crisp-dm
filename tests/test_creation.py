@@ -49,6 +49,7 @@ def test_baking_configs(config, fast):
     with bake_project(config) as project_directory:
         verify_folders(project_directory, config)
         verify_files(project_directory, config)
+        verify_repository_scaffold(project_directory)
 
         if fast < 2:
             verify_makefile_commands(project_directory, config)
@@ -102,6 +103,7 @@ def verify_files(root, config):
         "README.md",
         "pyproject.toml",
         ".env",
+        ".env.example",
         ".gitignore",
         "crisp_dm/README.md",
         "crisp_dm/1-comprension-del-negocio.md",
@@ -162,6 +164,42 @@ def verify_files(root, config):
         assert no_curlies(root / f)
 
 
+def verify_repository_scaffold(root):
+    assert (root / ".env.example").read_text(encoding="utf-8") == "DATABASE_URL=\n"
+    placeholders = [
+        f"data/{folder}/.gitkeep"
+        for folder in ("external", "interim", "processed", "raw")
+    ]
+    for relative in placeholders:
+        assert (root / relative).read_bytes() == b""
+    visible = [".env.example", *placeholders, "data/raw/nested/.gitkeep"]
+    ignored = [
+        ".env",
+        ".env.local",
+        ".env.production",
+        "data/readme.txt",
+        "data/raw/input.csv",
+        "data/raw/nested/input.parquet",
+        "data/processed/features",
+        "data/external/.env",
+    ]
+    for relative in visible + ignored:
+        path = root / relative
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("", encoding="utf-8")
+    run(["git", "init", "--quiet"], cwd=root, check=True, capture_output=True)
+    result = run(
+        ["git", "check-ignore", "--no-index", "--stdin", "-z"],
+        input="\0".join(visible + ignored) + "\0",
+        cwd=root,
+        text=True,
+        capture_output=True,
+    )
+    assert result.returncode in (0, 1), result.stderr
+    assert set(result.stdout.strip("\0").split("\0")) == set(ignored)
+
+
 def verify_makefile_commands(root, config):
     """Actually shell out to bash and run the make commands for:
     - blank command listing commands
@@ -207,7 +245,10 @@ def verify_makefile_commands(root, config):
 
     # Check that makefile help ran successfully
     assert "Reglas disponibles:" in stdout_output
-    assert "clean                    Borra todos los archivos compilados de Python" in stdout_output
+    assert (
+        "clean                    Borra todos los archivos compilados de Python"
+        in stdout_output
+    )
 
     # Check that linting and formatting ran successfully
     if config["environment_manager"] in ["pixi", "poetry"]:
