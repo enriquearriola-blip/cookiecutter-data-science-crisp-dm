@@ -1,5 +1,7 @@
 # Datos
-/data/
+/data/**
+!/data/**/
+!/data/**/.gitkeep
 
 # Archivos de almacenamiento propios de Mac OS
 .DS_Store
@@ -146,6 +148,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
